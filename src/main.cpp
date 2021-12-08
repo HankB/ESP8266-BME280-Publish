@@ -8,9 +8,10 @@ const char* mqtt_server = "host.domain"; // "<host>.localddomain" works for me.
 */
 #include "secrets.h"
 
-#define serial_IO   true
+#define serial_IO true
 
-void setup_wifi(void) {
+void setup_wifi(void)
+{
 
   delay(10);
   // We start by connecting to a WiFi network
@@ -23,14 +24,15 @@ void setup_wifi(void) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
 #if serial_IO
     delay(500);
     Serial.print(".");
 #else
-    digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on 
+    digitalWrite(LED_BUILTIN, LOW); // Turn the LED on
     delay(100);
-    digitalWrite(LED_BUILTIN, HIGH);   // Turn the LED off 
+    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off
     delay(400);
 #endif
   }
@@ -39,18 +41,20 @@ void setup_wifi(void) {
 #endif
 }
 
-
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);     // Initialize the LED_BUILTIN pin as an output
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT); // Initialize the LED_BUILTIN pin as an output
 
 #if serial_IO
   Serial.begin(115200);
-  while(!Serial);    // time to get serial running
+  while (!Serial)
+    ; // time to get serial running
 #endif
 
   setup_wifi();
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
 }
