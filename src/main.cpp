@@ -34,6 +34,9 @@ void setup_wifi(void) {
     delay(400);
 #endif
   }
+#if serial_IO
+  Serial.println("\r\nConnected");
+#endif
 }
 
 
