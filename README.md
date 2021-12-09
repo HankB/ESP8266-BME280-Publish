@@ -11,7 +11,8 @@ Provide a means to schedule operations down to the second and report time associ
 Some coding. Does nothing useful yet.
 
 * connects to access point
-* Queries NTP server
+* queries NTP server
+* publish to MQTT broker
 
 ## Toolchain
 
