@@ -124,12 +124,27 @@ void loop()
   static unsigned long lastMsg = 0;
   static const int msg_buffer_size = 50;
   char msg[msg_buffer_size];
+  static time_t local_timestamp = 0;     // count millis()
+  static unsigned long  previous_millis;
+  static unsigned long uptime = 0;
 
   unsigned long before = micros();
   timeClient.update();
   unsigned long epoch = timeClient.getEpochTime();
   unsigned long after = micros();
 
+  if (local_timestamp == 0)
+  {
+    local_timestamp = epoch; // initialize local counter
+    previous_millis = millis(); // and seconds rollover couner
+  }
+
+  if (millis() - previous_millis >= 1000) // TODO: handle rollover in 49 days.
+  {
+    local_timestamp++;
+    previous_millis = millis();
+    uptime++;
+  }
 
   if (!mqtt_client.connected()) {
     mqtt_reconnect();
@@ -141,7 +156,7 @@ void loop()
   if (now - lastMsg > 5000)   // time to publish again?
   {
     lastMsg = now;
-    snprintf(msg, msg_buffer_size, "t:%lu, et:%lu", epoch, after-before);
+    snprintf(msg, msg_buffer_size, "t:%lu, et:%lu, drift:%lld, uptime:%lu", epoch, after-before, local_timestamp-epoch, uptime);
     mqtt_client.publish("timestamp", msg);
 #if serial_IO
     Serial.print("Publish message: ");

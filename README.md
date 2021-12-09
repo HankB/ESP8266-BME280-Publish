@@ -13,6 +13,7 @@ Some coding. Does nothing useful yet.
 * connects to access point
 * queries NTP server
 * publish to MQTT broker
+* measure drift of local counter
 
 ## Toolchain
 
