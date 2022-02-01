@@ -14,7 +14,7 @@ const char* ntp_server = "host.domain"; // "<host>.localddomain" works for me.
 */
 #include "secrets.h"
 
-#define serial_IO false
+#define serial_IO true
 
 // For NTP
 WiFiUDP ntpUDP;
@@ -154,8 +154,9 @@ void loop()
   {
     if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
     last_msg_timestamp = current_time_stamp;
-    snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", \"temperature\": %3.1f}", \
-      current_time_stamp, uptime, getTemperature());
+    snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
+        "\"temperature\": %3.1f, \"pressure\": %3.1f, \"humidity\": %3.1f }",
+      current_time_stamp, uptime, getTemperature(), getPressure(), getHumidity());
     mqtt_client.publish("test/timestamp", msg);
 #if serial_IO
     Serial.print("Publish message: ");
