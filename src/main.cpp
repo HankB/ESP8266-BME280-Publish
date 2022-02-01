@@ -4,6 +4,8 @@
 #include <WiFiUdp.h>
 #include <PubSubClient.h>
 
+#include "BME280.h" // access BME280.cpp functions
+
 /* secrets.h should define the following as appropriate for your network.
 const char* ssid = "...";
 const char* password = "...";
@@ -114,13 +116,19 @@ void setup()
   Serial.begin(115200);
   while (!Serial)
     ; // time to get serial running
+  Serial.println("serial started");
 #endif
 
   setup_wifi();
   timeClient.begin();
+#if serial_IO
+  Serial.println("NTP client started");
+#endif
 
   mqtt_client.setServer(mqtt_server, 1883);
   mqtt_client.setCallback(mqtt_callback);
+
+  setup_BME280();
 }
 
 
@@ -128,7 +136,7 @@ void setup()
 void loop()
 {
   static unsigned long last_msg_timestamp = 0;
-  static const int msg_buffer_size = 50;
+  static const int msg_buffer_size = 150;
   char msg[msg_buffer_size];
   static unsigned long uptime = 0;
 
@@ -146,7 +154,8 @@ void loop()
   {
     if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
     last_msg_timestamp = current_time_stamp;
-    snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\"}", current_time_stamp, uptime);
+    snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", \"temperature\": %3.1f}", \
+      current_time_stamp, uptime, getTemperature());
     mqtt_client.publish("test/timestamp", msg);
 #if serial_IO
     Serial.print("Publish message: ");
@@ -155,6 +164,7 @@ void loop()
   }
 
 #if serial_IO
+  Serial.print("current timestamp");
   Serial.println(current_time_stamp);
 #endif
 
