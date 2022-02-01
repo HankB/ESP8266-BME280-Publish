@@ -13,7 +13,7 @@ Provide an alternative to using a Raspberry Pi Zero W to monitor these condition
 
 ## Status
 
-Build and test as copied.
+Build and test as copied. Current version associates with AP, fetches timestamp from NTP server and publishes that and uptime every 5 seconds.
 
 ## Toolchain
 
@@ -21,7 +21,7 @@ Using the Arduino platform via PlatformIO on VS Code (on Linux.)
 
 ## Errata
 
-You must provide an `include/secrets.h` that lists WiFi credentials and MQTT broker name. See `main.cpp` for more detail.
+You must provide an `include/secrets.h` that lists WiFi credentials, MQTT broker name and NTP server. See `main.cpp` for more detail.
 
 ## helpers
 
