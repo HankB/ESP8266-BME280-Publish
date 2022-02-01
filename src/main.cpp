@@ -34,8 +34,10 @@ void setup_wifi(void)
 #endif
 
   WiFi.mode(WIFI_STA);
+  WiFi.hostname("esp.1");
   WiFi.begin(ssid, password);
 
+  // loop while we retry to associate
   while (WiFi.status() != WL_CONNECTED)
   {
 #if serial_IO
@@ -53,7 +55,9 @@ void setup_wifi(void)
 #endif
 }
 
-// MQTT callbck - not sure if this is really needed for a publish only application
+// MQTT callbck - not sure if this is really needed for a publish
+// only application. Perhaps have another host publish timestamp
+// messages and eliminate thhe need for the NTP client
 void mqtt_callback(char *topic, byte *payload, unsigned int length)
 {
 #if serial_IO
@@ -77,7 +81,7 @@ void mqtt_reconnect()
     Serial.print("Attempting MQTT connection...");
 #endif
     // Create a random client ID
-    String clientId = "ESP8266Client-";
+    String clientId = "ESP-Client-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
     if (mqtt_client.connect(clientId.c_str()))
@@ -119,45 +123,31 @@ void setup()
   mqtt_client.setCallback(mqtt_callback);
 }
 
+
+// main loop ALA Arduino sketches
 void loop()
 {
-  static unsigned long lastMsg = 0;
+  static unsigned long last_msg_timestamp = 0;
   static const int msg_buffer_size = 50;
   char msg[msg_buffer_size];
-  static time_t local_timestamp = 0;     // count millis()
-  static unsigned long  previous_millis;
   static unsigned long uptime = 0;
 
-  unsigned long before = micros();
   timeClient.update();
-  unsigned long epoch = timeClient.getEpochTime();
-  unsigned long after = micros();
+  unsigned long current_time_stamp = timeClient.getEpochTime();
 
-  if (local_timestamp == 0)
-  {
-    local_timestamp = epoch; // initialize local counter
-    previous_millis = millis(); // and seconds rollover couner
-  }
-
-  if (millis() - previous_millis >= 1000) // TODO: handle rollover in 49 days.
-  {
-    local_timestamp++;
-    previous_millis = millis();
-    uptime++;
-  }
-
+  // make sure MQTT still connected
   if (!mqtt_client.connected()) {
     mqtt_reconnect();
   }
   mqtt_client.loop();
 
 
-  unsigned long now = millis();   // will roll over in 49 days. TODO: handle gracefully.
-  if (now - lastMsg > 5000)   // time to publish again?
+  if (current_time_stamp - last_msg_timestamp >= 5)     // time to publish again? Every 5 seconds
   {
-    lastMsg = now;
-    snprintf(msg, msg_buffer_size, "t:%lu, et:%lu, drift:%lld, uptime:%lu", epoch, after-before, local_timestamp-epoch, uptime);
-    mqtt_client.publish("timestamp", msg);
+    if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
+    last_msg_timestamp = current_time_stamp;
+    snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\"}", current_time_stamp, uptime);
+    mqtt_client.publish("test/timestamp", msg);
 #if serial_IO
     Serial.print("Publish message: ");
     Serial.println(msg);
@@ -165,9 +155,7 @@ void loop()
   }
 
 #if serial_IO
-  Serial.print(epoch);
-  Serial.print(" ");
-  Serial.println(after-before);
+  Serial.println(current_time_stamp);
 #endif
 
   delay(1000);
