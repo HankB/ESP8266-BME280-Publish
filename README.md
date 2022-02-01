@@ -1,19 +1,18 @@
-# ESP8266 NTP MQTT Time
+# ESP8266 BME280 Publish
 
-Explore timekeeping on the ESP8266 using NTP and producing a value equivalent to UNIX time() (time since midnight January 1, 1970 GMT.)
+Project uses <https://github.com/HankB/ESP8266-NTP-MQTT-Time> as a starting point and features:
+
+* MQTT support to publish
+* NTP to establoish time and provide time stamps.
+* BME280 support to read the sensor (temperature, humidity and pressure.)
 
 ## Motivation
 
-Provide a means to schedule operations down to the second and report time associated with a payload via MQTT.
+Provide an alternative to using a Raspberry Pi Zero W to monitor these conditions.
 
 ## Status
 
-Some coding. Does nothing useful yet.
-
-* connects to access point
-* queries NTP server
-* publish to MQTT broker
-* measure drift of local counter
+Build and test as copied.
 
 ## Toolchain
 
@@ -22,3 +21,11 @@ Using the Arduino platform via PlatformIO on VS Code (on Linux.)
 ## Errata
 
 You must provide an `include/secrets.h` that lists WiFi credentials and MQTT broker name. See `main.cpp` for more detail.
+
+## helpers
+
+Monitor MQTT traffic using 
+
+```text
+mosquitto_sub -v -t \#
+```
