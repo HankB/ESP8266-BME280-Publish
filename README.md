@@ -2,8 +2,9 @@
 
 Project uses <https://github.com/HankB/ESP8266-NTP-MQTT-Time> as a starting point and features:
 
-* MQTT support to publish
-* NTP to establoish time and provide time stamps.
+* WiFi to connect to the outside world.
+* MQTT support to publish.
+* NTP to establish time and provide time stamps.
 * BME280 support to read the sensor (temperature, humidity and pressure.)
 
 ## Motivation
