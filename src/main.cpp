@@ -14,6 +14,11 @@ const char* ntp_server = "host.domain"; // "<host>.localddomain" works for me.
 */
 #include "secrets.h"
 
+#define my_host_name "esp.1"
+// topic like "HA/latham/dining_rm_west/temp_humidity"
+static const char* mqtt_topic = "HA/" my_host_name "/roamer/temp_humidity_press";
+static const unsigned int period=60; // period in seconds
+
 #define serial_IO true
 
 // For NTP
@@ -36,7 +41,7 @@ void setup_wifi(void)
 #endif
 
   WiFi.mode(WIFI_STA);
-  WiFi.hostname("esp.1");
+  WiFi.hostname(my_host_name);
   WiFi.begin(ssid, password);
 
   // loop while we retry to associate
@@ -157,7 +162,7 @@ void loop()
     snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
         "\"temperature\": %3.1f, \"pressure\": %3.1f, \"humidity\": %3.1f }",
       current_time_stamp, uptime, getTemperature(), getPressure(), getHumidity());
-    mqtt_client.publish("test/timestamp", msg);
+    mqtt_client.publish(mqtt_topic, msg);
 #if serial_IO
     Serial.print("Publish message: ");
     Serial.println(msg);
@@ -165,9 +170,9 @@ void loop()
   }
 
 #if serial_IO
-  Serial.print("current timestamp");
+  Serial.print("current timestamp ");
   Serial.println(current_time_stamp);
 #endif
 
-  delay(1000);
+  delay(period*1000-500);
   }
