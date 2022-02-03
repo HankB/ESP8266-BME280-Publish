@@ -169,7 +169,7 @@ void loop()
     if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
     last_msg_timestamp = current_time_stamp;
     snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
-        "\"temperature\": %3.1f, \"pressure\": %3.1f, \"humidity\": %3.1f }",
+        "\"temp\": %3.1f, \"press\": %3.1f, \"humid\": %3.1f }",
       current_time_stamp, uptime, getTemperature(), getPressure(), getHumidity());
     mqtt_client.publish(mqtt_topic, msg);
 #if serial_IO
