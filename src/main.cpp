@@ -148,6 +148,15 @@ void loop()
   timeClient.update();
   unsigned long current_time_stamp = timeClient.getEpochTime();
 
+  // synchronize with other publishers 
+  do {
+      delay(500);   // delay 500 ms
+      timeClient.update();
+      current_time_stamp = timeClient.getEpochTime();
+    Serial.print("timestamp ");
+    Serial.println(current_time_stamp);
+  } while ((current_time_stamp%period) != 0);
+
   // make sure MQTT still connected
   if (!mqtt_client.connected()) {
     mqtt_reconnect();
