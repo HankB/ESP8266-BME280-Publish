@@ -13,6 +13,8 @@ Provide an alternative to using a Raspberry Pi Zero W to monitor these condition
 
 ## Status
 
+Not ready for peroduction - too many problems. Please see issue #1.
+
 Publish timestamp, uptime and temperature.
 
 ## Toolchain
