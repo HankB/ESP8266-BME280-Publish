@@ -13,22 +13,12 @@ void setup_BME280(void) {
   Wire.setClock(100000);
   unsigned status = bme.begin(0x76);
   if (!status) {
-#if serial_IO
-      Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-      Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
-      Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-      Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-      Serial.print("        ID of 0x60 represents a BME 280.\n");
-      Serial.print("        ID of 0x61 represents a BME 680.\n");
-      while (1) delay(10);
-#else
       while(1) {
         digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on 
         delay(100);
         digitalWrite(LED_BUILTIN, HIGH);   // Turn the LED off 
         delay(90);
       }
-#endif
   }
 }
 
