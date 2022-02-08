@@ -29,8 +29,9 @@ Only works if serial ouitput is enabled.
 
 ## helpers
 
-Monitor MQTT traffic using 
+Monitor MQTT, serial traffic using 
 
 ```text
 mosquitto_sub -v -t \#
+minicom --device /dev/ttyUSB0
 ```
