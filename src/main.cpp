@@ -148,15 +148,6 @@ void loop()
   timeClient.update();
   unsigned long current_time_stamp = timeClient.getEpochTime();
 
-  // synchronize with other publishers 
-  do {
-      delay(500);   // delay 500 ms
-      timeClient.update();
-      current_time_stamp = timeClient.getEpochTime();
-    Serial.print("timestamp ");
-    Serial.println(current_time_stamp);
-  } while ((current_time_stamp%period) != 0);
-
   // make sure MQTT still connected
   if (!mqtt_client.connected()) {
     mqtt_reconnect();
@@ -164,8 +155,13 @@ void loop()
   mqtt_client.loop();
 
 
-  if (current_time_stamp - last_msg_timestamp >= 5)     // time to publish again? Every 5 seconds
+  // time to publish again? Every "period" seconds
+  if (current_time_stamp - last_msg_timestamp >= period)
   {
+#if serial_IO
+    Serial.print("current timestamp ");
+    Serial.println(current_time_stamp);
+#endif
     if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
     last_msg_timestamp = current_time_stamp;
     snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
@@ -178,10 +174,7 @@ void loop()
 #endif
   }
 
-#if serial_IO
-  Serial.print("current timestamp ");
-  Serial.println(current_time_stamp);
-#endif
-
-  delay(period*1000-500);
+  //delay(period*1000-500); // can't use long delay. 
+                            //need to call mqtt_client.loop() more frequently
+  delay(500); // delay 1/2 s
   }
