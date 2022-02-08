@@ -5,21 +5,15 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
+#include "BME280.h" // access BME280.cpp functions
+
 static Adafruit_BME280 bme; // I2C
 
-void setup_BME280(void) {
+unsigned setup_BME280(void) {
   // configure BME280/I2C
   Wire.begin(D3, D4); // Make sure you have D3 & D4 hooked up to the BME280
   Wire.setClock(100000);
-  unsigned status = bme.begin(0x76);
-  if (!status) {
-      while(1) {
-        digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on 
-        delay(100);
-        digitalWrite(LED_BUILTIN, HIGH);   // Turn the LED off 
-        delay(90);
-      }
-  }
+  return bme.begin(0x76);
 }
 
 // Calls to fetch readings
