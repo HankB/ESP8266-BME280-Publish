@@ -19,7 +19,7 @@ const char* ntp_server = "host.domain"; // "<host>.localddomain" works for me.
 static const char* mqtt_topic = "HA/" my_host_name "/roamer/temp_humidity_press";
 static const unsigned int period=60; // period in seconds
 
-#define serial_IO true
+#define serial_IO false
 
 // For NTP
 WiFiUDP ntpUDP;
