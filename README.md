@@ -13,9 +13,9 @@ Provide an alternative to using a Raspberry Pi Zero W to monitor these condition
 
 ## Status
 
-Not ready for production - too many problems. Please see issue #1.
+Not ready for production - too many problems. Please see issue #1. Now some problems resolved.
 
-Publish timestamp, uptime and temperature.
+Publish timestamp, uptime and temperature, humidity and pressure using a format compatible with (private) HomeAssistant setup.
 
 ## Toolchain
 
