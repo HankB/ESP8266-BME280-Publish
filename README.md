@@ -15,7 +15,7 @@ Provide an alternative to using a Raspberry Pi Zero W to monitor these condition
 
 Not ready for production - too many problems. Please see issue #1. Now some problems resolved.
 
-Publish timestamp, uptime and temperature, humidity and pressure using a format compatible with (private) HomeAssistant setup.
+Publish timestamp, uptime and temperature, humidity and pressure using a format compatible with (private) HomeAssistant setup. If run long enoiugh, it starts proeducing constant bad values until the ESP8266 is reset.
 
 ## Toolchain
 
@@ -24,8 +24,6 @@ Using the Arduino platform via PlatformIO on VS Code (on Linux.)
 ## Errata
 
 You must provide an `include/secrets.h` that lists WiFi credentials, MQTT broker name and NTP server. See `main.cpp` for more detail.
-
-Only works if serial ouitput is enabled.
 
 ## helpers
 
