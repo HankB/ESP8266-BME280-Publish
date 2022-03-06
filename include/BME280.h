@@ -5,3 +5,4 @@ unsigned setup_BME280(void);
 double getTemperature(void);
 double getHumidity(void);
 double getPressure(void);
+bool reset_BME280(void);

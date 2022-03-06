@@ -29,3 +29,8 @@ double getHumidity(void) {
 double getPressure(void) {
     return bme.readPressure()/100;
 }
+
+// use bool Adafruit_BME280::init() to reset the BME280
+bool reset_BME280(void) {
+    return bme.init();
+}

@@ -19,7 +19,7 @@ const char* ntp_server = "host.domain"; // "<host>.localddomain" works for me.
 static const char* mqtt_topic = "HA/" my_host_name "/roamer/temp_humidity_press";
 static const unsigned int period=60; // period in seconds
 
-#define serial_IO false
+#define serial_IO true
 
 // For NTP
 WiFiUDP ntpUDP;
@@ -28,6 +28,9 @@ NTPClient timeClient(ntpUDP, ntp_server);
 // For MQTT
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
+
+// for BME280
+static unsigned bme_status;
 
 void setup_wifi(void)
 {
@@ -133,7 +136,8 @@ void setup()
   mqtt_client.setServer(mqtt_server, 1883);
   mqtt_client.setCallback(mqtt_callback);
 
-  setup_BME280();
+  delay(1000);
+  bme_status = setup_BME280();
 }
 
 
@@ -144,6 +148,7 @@ void loop()
   static const int msg_buffer_size = 150;
   char msg[msg_buffer_size];
   static unsigned long uptime = 0;
+  static unsigned BME280_reset_count = 0;
 
   timeClient.update();
   unsigned long current_time_stamp = timeClient.getEpochTime();
@@ -164,9 +169,22 @@ void loop()
 #endif
     if(last_msg_timestamp != 0 ) uptime += (current_time_stamp-last_msg_timestamp);
     last_msg_timestamp = current_time_stamp;
+    double pressure = getPressure(); // use pressure reading to check for crashed BME280
+    while( pressure < 0.1)
+    {
+      reset_BME280();
+      pressure = getPressure();
+      digitalWrite(LED_BUILTIN, LOW); // Turn the LED on
+      delay(20);
+      digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off
+      delay(980);
+      BME280_reset_count++;
+}
     snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
-        "\"temp\": %3.1f, \"press\": %3.1f, \"humid\": %3.1f }",
-      current_time_stamp, uptime, getTemperature(), getPressure(), getHumidity());
+        "\"temp\": %3.1f, \"press\": %3.1f, \"humid\": %3.1f, \"status\": %u, \"resets\":%u }",
+
+      current_time_stamp, uptime, getTemperature(), pressure, getHumidity(),
+      bme_status, BME280_reset_count);
     mqtt_client.publish(mqtt_topic, msg);
 #if serial_IO
     Serial.print("Publish message: ");
@@ -177,4 +195,4 @@ void loop()
   //delay(period*1000-500); // can't use long delay. 
                             //need to call mqtt_client.loop() more frequently
   delay(500); // delay 1/2 s
-  }
+}
