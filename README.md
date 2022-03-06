@@ -17,6 +17,10 @@ Not ready for production - too many problems. Please see issue #1. Now some prob
 
 Publish timestamp, uptime and temperature, humidity and pressure using a format compatible with (private) HomeAssistant setup. If run long enoiugh, it starts proeducing constant bad values until the ESP8266 is reset.
 
+## Wiring 
+
+The Adafruit library communicates with the BME280 using I2C and assigning `D3`, `D4` as SDA and SCL. The BME280 is powered using the connection labeled as `3V` and grounded using `G`
+
 ## Toolchain
 
 Using the Arduino platform via PlatformIO on VS Code (on Linux.)
