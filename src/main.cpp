@@ -179,7 +179,10 @@ void loop()
       digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off
       delay(980);
       BME280_reset_count++;
-}
+#if serial_IO
+      Serial.println("\r\nreset BME280");
+#endif
+    }
     snprintf(msg, msg_buffer_size, "{ \"t\": \"%lu\",  \"uptime\": \"%lu\", "
         "\"temp\": %3.1f, \"press\": %3.1f, \"humid\": %3.1f, \"status\": %u, \"resets\":%u }",
 
