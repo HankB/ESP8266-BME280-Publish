@@ -1,10 +1,11 @@
-# ESP8266 Arduino WiFi NTP and MQTT
+# ESP8266 Arduino WiFi NTP MQTT and BME280
 
 Project uses <https://github.com/HankB/ESP8266-NTP-MQTT-Time> as a starting point and features:
 
 * WiFi to connect to the outside world.
 * MQTT support to publish.
 * NTP to establish time and provide time stamps.
+* And apparently BME280 sensor support.
 
 ## Motivation
 
